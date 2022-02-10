@@ -29,7 +29,7 @@ import WebCam from "./webcam.vue";
 import { find, head } from "lodash";
 
 export default {
-  name: "demo",
+  name: "photograph",
   components: {
     WebCam,
   },

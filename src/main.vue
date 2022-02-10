@@ -15,7 +15,7 @@
         <div class="card-text">
           上传身份证（人面面）
           <el-button
-            icon="el-icon-plus"
+            icon="el-icon-plus" 
             circle
             @click="toPhotograph"
           ></el-button>
@@ -31,7 +31,7 @@
 
     <div class="footer">
       <el-button type="primary" @click="toVideo">下一步</el-button>
-      <!-- <router-link to="/demo">
+      <!-- <router-link to="/photograph">
         <span class="spanfour">link跳转</span>
       </router-link> -->
     </div>
@@ -57,8 +57,9 @@ export default {
 
   methods: {
     toPhotograph() {
-      // console.log("00000", this.$router);
-      window.location.href = "https://www.baidu.com/";
+      console.log("00000", this.$router);
+      this.$router.push("/photograph")
+      // window.location.href = "https://www.baidu.com/";
     },
     toVideo() {
       if (this.imgNegative == undefined || this.imgNegative == undefined) {

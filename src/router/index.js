@@ -6,8 +6,9 @@ Vue.use(Router);
 
 export const constantRoutes = [
     {
-        path: '/demo',
-        component: () => import('@/demo')
+        name: 'photograph',
+        path: '/photograph',
+        component: () => import('@/photograph')
     },
 ]
 
