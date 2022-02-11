@@ -74,12 +74,13 @@ export default {
       this.report = res.labelAnnotations;
     },
     async onCapture() {
-        // this.img = await this.$refs.webcam.capture();
+      // this.img = await this.$refs.webcam.capture();
       if (this.$route.params.imageType == 1) {
         eventBus.$emit("imagePositive", await this.$refs.webcam.capture());
       } else {
         eventBus.$emit("imgNegative", await this.$refs.webcam.capture());
       }
+      this.onStop();
       this.$router.go(-1);
     },
     onStarted(stream) {

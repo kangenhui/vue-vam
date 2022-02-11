@@ -1,29 +1,32 @@
 <template>
   <div class="photograph">
-    <div class="header">
-      <web-cam
-        ref="webcam"
-        :deviceId="deviceId"
-        @started="onStarted"
-        @stopped="onStopped"
-        @error="onError"
-        @cameras="onCameras"
-        @camera-change="onCameraChange"
-        :isFrontCam="frontCam"
-        :debug="true"
-        :googleKey="googleKey"
-      />
-      <span class="title font-weight-light" v-if="device">
-        {{ device.label }}
-      </span>
-    </div>
-    <div class="footer">
-      <el-button type="danger" @click="recordOrStop" v-if="this.isRecord"
-        >录 制 结 束
-      </el-button>
-      <el-button type="danger" @click="recordOrStop" v-else
-        >录 制 开 始
-      </el-button>
+    <div v-if="flag">请耐心等待认证结果</div>
+    <div v-else>
+      <div class="header">
+        <web-cam
+          ref="webcam"
+          :deviceId="deviceId"
+          @started="onStarted"
+          @stopped="onStopped"
+          @error="onError"
+          @cameras="onCameras"
+          @camera-change="onCameraChange"
+          :isFrontCam="frontCam"
+          :debug="true"
+          :googleKey="googleKey"
+        />
+        <span class="title font-weight-light" v-if="device">
+          {{ device.label }}
+        </span>
+      </div>
+      <div class="footer">
+        <el-button type="danger" @click="recordOrStop" v-if="this.isRecord"
+          >录 制 结 束
+        </el-button>
+        <el-button type="danger" @click="recordOrStop" v-else
+          >录 制 开 始
+        </el-button>
+      </div>
     </div>
   </div>
 </template>
@@ -47,6 +50,7 @@ export default {
       report: null,
       googleKey: process.env.VUE_APP_OCR_GVA,
       isRecord: false,
+      flag: false,
     };
   },
   computed: {
@@ -113,6 +117,7 @@ export default {
       if (this.isRecord) {
         // 停止
         this.$refs.webcam.stop();
+        this.flag = true;
       } else {
         // 开始
         this.img = await this.$refs.webcam.record();
