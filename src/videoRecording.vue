@@ -18,7 +18,12 @@
       </span>
     </div>
     <div class="footer">
-      <el-button type="danger" @click="onCapture">录 制 开 始</el-button>
+      <el-button type="danger" @click="recordOrStop" v-if="this.isRecord"
+        >录 制 结 束
+      </el-button>
+      <el-button type="danger" @click="recordOrStop" v-else
+        >录 制 开 始
+      </el-button>
     </div>
   </div>
 </template>

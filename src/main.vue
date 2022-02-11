@@ -89,7 +89,6 @@ export default {
         this.$message.error("请完成当前操作");
         return;
       }
-      this.imgNegative = self.$parent.imgDataTwo;
       if (
         this.base64ToSize(this.imgNegative) > 1048576 ||
         this.base64ToSize(this.imgPositive) > 1048576

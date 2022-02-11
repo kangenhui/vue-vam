@@ -387,14 +387,12 @@ export default {
       mediaRecorder.onstop = () => {
         var blob = new Blob(this.recordedBlobs, { type: "video/mp4" });
         reader.addEventListener("load", () => {
-          // resolve(reader.result);
-          // console.log(reader.result);
+          console.log(reader.result);
         });
         reader.readAsDataURL(blob);
       };
-
-      // return new Promise((resolve, reject) => {});
-      // console.log(a)
+      // new File(blob, filename, {type: "video/mp4" , lastModified: Date.now()});
+      // return new Promise((resolve, reject) => {  resolve(reader.result);});
     },
   },
 };
