@@ -3,7 +3,7 @@
     <div class="title">实名认证</div>
 
     <div class="header">
-      <el-steps :active="0" finish-status="success" class="steps">
+      <el-steps :active="active" finish-status="success" class="steps">
         <el-step title="上传身份证"></el-step>
         <el-step title="实人检测"></el-step>
         <el-step title="等待结果"></el-step>
@@ -21,7 +21,7 @@
           ></el-button>
         </div>
         <div class="card-text" v-else>
-          <img :src="imgPositive" style="width: 50%" @click="toPhotograph(1)" />
+          <img :src="imgPositive" @click="toPhotograph(1)" />
         </div>
       </el-card>
       <el-card class="box-card" shadow="always">
@@ -34,7 +34,7 @@
           ></el-button>
         </div>
         <div class="card-text" v-else>
-          <img :src="imgNegative" style="width: 50%" />
+          <img :src="imgNegative" @click="toPhotograph(2)" />
         </div>
       </el-card>
     </div>
@@ -55,6 +55,7 @@ export default {
       bodyStyle: {
         height: "100px",
       },
+      active: 0,
       imgPositive: undefined,
       imgNegative: undefined,
     };
@@ -88,7 +89,21 @@ export default {
         this.$message.error("请完成当前操作");
         return;
       }
-      alert("跳转视频");
+      this.imgNegative = self.$parent.imgDataTwo;
+      if (
+        this.base64ToSize(this.imgNegative) > 1048576 ||
+        this.base64ToSize(this.imgPositive) > 1048576
+      ) {
+        this.$message.error("图片大小超过1MB,请重新拍照上传");
+      }
+      this.activa = 1;
+      this.$router.push("/videoRecording");
+    },
+    base64ToSize(imgUrl) {
+      var eqTagIndex = imgUrl.indexOf("=");
+      imgUrl = eqTagIndex != -1 ? imgUrl.substring(0, eqTagIndex) : imgUrl;
+      var strLen = imgUrl.length;
+      return strLen - (strLen / 8) * 2;
     },
   },
 };
@@ -102,10 +117,13 @@ body {
 }
 
 img {
-  width: auto;
-  height: auto;
-  max-width: 100%;
-  max-height: 100%;
+  // width: auto;
+  // height: auto;
+  // max-width: 100%;
+  // max-height: 100%;
+  width: 100%; 
+  height: 100%; 
+  display: block;
 }
 
 .container {

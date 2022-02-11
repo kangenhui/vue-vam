@@ -113,7 +113,7 @@ export default {
 
     // MediaDevices.getUserMedia(constraints) constraints参数值(例如：{ audio: true, video: true })
     Contraints() {
-      // 前后摄像头 判断电脑手机
+      // 传值
       const facingMode =
         this.mediaConstraints.video.facingMode ||
         (this.isFrontCam ? "user" : "environment");
@@ -126,8 +126,10 @@ export default {
           : {}),
         facingMode,
         // 分辨率
-        width: { min: 1024, ideal: 1280, max: 1920 },
-        height: { min: 776, ideal: 720, max: 1080 },
+        // width: { min: 1024, ideal: 1280, max: 1920 },
+        // height: { min: 776, ideal: 720, max: 1080 },
+        width: 300,
+        height: 500,
       };
       // alert(JSON.stringify(video))
       return {
@@ -253,15 +255,16 @@ export default {
 
     // 拍照
     async capture() {
-      if (window.ImageCapture) {
-        const gURL = await this.gCapture();
-        return gURL;
-      }
+      // 暂时注释
+      // if (window.ImageCapture) {
+      //   const gURL = await this.gCapture();
+      //   return gURL;
+      // }
       this.canvas = this.getCanvas();
       // 获取base64格式 toDataURL具有压缩功能
       const URL = this.canvas.toDataURL(this.screenshotFormat, 0.7);
       let str = URL.replace("data:image/jpeg;base64,", "");
-      let strLength = str.length; // 图片大小
+      // let strLength = str.length; // 图片大小
       this.saveSnapShot(URL);
       return URL;
     },
@@ -307,6 +310,7 @@ export default {
         this.ctx = canvas.getContext("2d");
       }
       const { ctx, canvas } = this;
+      //  canvas.width canvas.height
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
       return canvas;
     },
