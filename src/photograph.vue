@@ -27,6 +27,7 @@
 <script>
 import WebCam from "./webcam.vue";
 import { find, head } from "lodash";
+import eventBus from "./goBackEntity.js";
 
 export default {
   name: "photograph",
@@ -73,13 +74,19 @@ export default {
       this.report = res.labelAnnotations;
     },
     async onCapture() {
-      this.img = await this.$refs.webcam.capture();
+        // this.img = await this.$refs.webcam.capture();
+      if (this.$route.params.imageType == 1) {
+        eventBus.$emit("imagePositive", await this.$refs.webcam.capture());
+      } else {
+        eventBus.$emit("imgNegative", await this.$refs.webcam.capture());
+      }
+      this.$router.go(-1);
     },
     onStarted(stream) {
-      console.log("On Started Event", stream);
+      // console.log("On Started Event", stream);
     },
     onStopped(stream) {
-      console.log("On Stopped Event", stream);
+      // console.log("On Stopped Event", stream);
     },
     onStop() {
       this.$refs.webcam.stop();
@@ -88,7 +95,7 @@ export default {
       this.$refs.webcam.start();
     },
     onError(error) {
-      console.log("On Error Event", error);
+      // console.log("On Error Event", error);
     },
     onCameras(cameras) {
       this.devices = cameras;
@@ -97,12 +104,12 @@ export default {
         this.devices.length == 1
           ? this.devices[0].deviceId
           : this.devices[1].deviceId;
-      console.log("On Cameras Event", this.devices);
+      // console.log("On Cameras Event", this.devices);
     },
     onCameraChange(deviceId) {
       this.deviceId = deviceId;
       this.camera = deviceId;
-      console.log("On Camera Change Event", deviceId);
+      // console.log("On Camera Change Event", deviceId);
     },
     async recordOrStop() {
       if (this.isRecord) {

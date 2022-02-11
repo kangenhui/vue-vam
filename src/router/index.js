@@ -6,13 +6,20 @@ Vue.use(Router);
 
 export const constantRoutes = [
     {
-        name: 'photograph',
+        path: '/',
+        component: () => import('@/main'),
+        name: 'main',
+        props: true
+    },
+    {
         path: '/photograph',
-        component: () => import('@/photograph')
+        component: () => import('@/photograph'),
+        name: 'photograph',
+        props: true
     },
 ]
 
-const router=new Router({
+const router = new Router({
     routes: constantRoutes
 });
 

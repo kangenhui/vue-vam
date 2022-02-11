@@ -12,33 +12,41 @@
 
     <div class="middle">
       <el-card class="box-card" shadow="always">
-        <div class="card-text">
+        <div class="card-text" v-if="!imgPositive">
           上传身份证（人面面）
           <el-button
-            icon="el-icon-plus" 
+            icon="el-icon-plus"
             circle
-            @click="toPhotograph"
+            @click="toPhotograph(1)"
           ></el-button>
+        </div>
+        <div class="card-text" v-else>
+          <img :src="imgPositive" style="width: 50%" @click="toPhotograph(1)" />
         </div>
       </el-card>
       <el-card class="box-card" shadow="always">
-        <div class="card-text">
+        <div class="card-text" v-if="!imgNegative">
           上传身份证（国徽面）
-          <el-button icon="el-icon-plus" circle></el-button>
+          <el-button
+            icon="el-icon-plus"
+            circle
+            @click="toPhotograph(2)"
+          ></el-button>
+        </div>
+        <div class="card-text" v-else>
+          <img :src="imgNegative" style="width: 50%" />
         </div>
       </el-card>
     </div>
-
     <div class="footer">
       <el-button type="primary" @click="toVideo">下一步</el-button>
-      <!-- <router-link to="/photograph">
-        <span class="spanfour">link跳转</span>
-      </router-link> -->
     </div>
   </div>
 </template>
 
 <script>
+import eventBus from "./goBackEntity.js";
+
 export default {
   name: "photograph",
   components: {},
@@ -54,12 +62,26 @@ export default {
   computed: {},
   watch: {},
   filters: {},
-
+  created() {
+    var self = this;
+    this.imgPositive = self.$parent.imgDataOne;
+    this.imgNegative = self.$parent.imgDataTwo;
+    eventBus.$on("imagePositive", (val) => {
+      self.$parent.imgDataOne = val;
+    });
+    eventBus.$on("imgNegative", (val) => {
+      self.$parent.imgDataTwo = val;
+    });
+  },
   methods: {
-    toPhotograph() {
-      console.log("00000", this.$router);
-      this.$router.push("/photograph")
-      // window.location.href = "https://www.baidu.com/";
+    toPhotograph(imageType) {
+      // this.$router.push("/photograph");
+      this.$router.push({
+        name: "photograph",
+        params: {
+          imageType: imageType,
+        },
+      });
     },
     toVideo() {
       if (this.imgNegative == undefined || this.imgNegative == undefined) {
@@ -77,6 +99,13 @@ body {
   height: 100%;
   width: 100%;
   position: fixed;
+}
+
+img {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
 }
 
 .container {
@@ -103,6 +132,7 @@ body {
   }
 
   .middle {
+    width: 100%;
     height: 60%;
     display: inline-block;
     vertical-align: middle;

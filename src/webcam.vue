@@ -146,7 +146,7 @@ export default {
         try {
           this.$refs.video.srcObject = stream;
         } catch (err) {
-          console.log(err);
+          console.log("err==>", err);
         }
       } else {
         // old broswers
@@ -237,7 +237,7 @@ export default {
       getUserMedia(this.Contraints, (err, stream) => {
         if (err) {
           this.$emit("error", err);
-          console.log("failed to get user camera");
+          console.log("failed to get user camera", err);
           return;
         }
         // console.log('Got stream', stream)
@@ -317,7 +317,7 @@ export default {
     */
     async googleVision(type = "LABEL_DETECTION", index) {
       if (!this.googleKey) {
-        console.log("no google key detected");
+        // console.log("no google key detected");
         return;
       }
       const API_URL = `https://vision.googleapis.com/v1/images:annotate?key=${this.googleKey}`;
@@ -343,7 +343,7 @@ export default {
         this.imgReport = data.responses[0];
         this.captures[imgIndex].imgReport = data.responses[0];
       }
-      if (this.debug) console.log(this.imgReport);
+      // if (this.debug) console.log(this.imgReport);
       this.$emit("googleReport", this.imgReport);
       return this.imgReport;
     },
@@ -369,7 +369,7 @@ export default {
         }
         mediaRecorder = new MediaRecorder(this.videoStream, options);
       } else {
-        console.log("MediaRecorder not supported, boo");
+        // console.log("MediaRecorder not supported, boo");
         mediaRecorder = new MediaRecorder(this.videoStream);
       }
       mediaRecorder.start();
@@ -384,7 +384,7 @@ export default {
         var blob = new Blob(this.recordedBlobs, { type: "video/mp4" });
         reader.addEventListener("load", () => {
           // resolve(reader.result);
-          console.log(reader.result);
+          // console.log(reader.result);
         });
         reader.readAsDataURL(blob);
       };
