@@ -80,7 +80,9 @@ export default {
       } else {
         eventBus.$emit("imgNegative", await this.$refs.webcam.capture());
       }
+
       this.onStop();
+
       this.$router.go(-1);
     },
     onStarted(stream) {

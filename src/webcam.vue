@@ -128,8 +128,8 @@ export default {
         // 分辨率
         // width: { min: 1024, ideal: 1280, max: 1920 },
         // height: { min: 776, ideal: 720, max: 1080 },
-        width: 300,
-        height: 500,
+        width: 1280,
+        height: 720,
       };
       // alert(JSON.stringify(video))
       return {
@@ -238,8 +238,34 @@ export default {
       if (this.debug) console.log(this.Contraints);
       getUserMedia(this.Contraints, (err, stream) => {
         if (err) {
-          this.$emit("error", err);
-          console.log("failed to get user camera", err);
+          if (
+            err.name == "NotFoundError" ||
+            err.name == "DevicesNotFoundError"
+          ) {
+            console.log("用户没有网络摄像头或麦克风");
+          } else if (
+            err.name == "NotReadableError" ||
+            err.name == "TrackStartError"
+          ) {
+            console.log(
+              "尽管用户授予了使用匹配设备的权限，但在操作系统、浏览器或网页级别发生了硬件错误，从而阻止了对设备的访问。"
+            );
+          } else if (
+            err.name == "OverconstrainedError" ||
+            err.name == "ConstraintNotSatisfiedError"
+          ) {
+            console.log("没有满足请求标准的候选设备");
+          } else if (
+            err.name == "NotAllowedError" ||
+            err.name == "PermissionDeniedError"
+          ) {
+            console.log("用户拒绝（或以前拒绝）访问网络摄像头或麦克风。");
+          } else if (err.name == "TypeError" || err.name == "TypeError") {
+            console.log("需要音频和/或视频");
+          } else {
+            this.$emit("error", err);
+            console.log("failed to get user camera", err);
+          }
           return;
         }
         // console.log('Got stream', stream)
@@ -260,8 +286,10 @@ export default {
       //   const gURL = await this.gCapture();
       //   return gURL;
       // }
+      // alert("拍照点击事件")
       this.canvas = this.getCanvas();
       // 获取base64格式 toDataURL具有压缩功能
+      // alert("压缩转base开始")
       const URL = this.canvas.toDataURL(this.screenshotFormat, 0.7);
       let str = URL.replace("data:image/jpeg;base64,", "");
       // let strLength = str.length; // 图片大小
@@ -301,8 +329,11 @@ export default {
     },
     // 获取画布
     getCanvas() {
+      // alert("开始获取画布")
       const video = this.$refs.video;
+      // alert(this.ctx)
       if (!this.ctx) {
+        // alert("创建画布对象")
         const canvas = document.createElement("canvas");
         canvas.height = video.videoHeight;
         canvas.width = video.videoWidth;
@@ -311,6 +342,7 @@ export default {
       }
       const { ctx, canvas } = this;
       //  canvas.width canvas.height
+      // alert("生成画布")
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
       return canvas;
     },

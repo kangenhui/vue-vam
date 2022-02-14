@@ -28,6 +28,8 @@
         </el-button>
       </div>
     </div>
+
+    <!-- <el-button type="danger" @click="galleryImg">... </el-button> -->
   </div>
 </template>
 
@@ -75,7 +77,10 @@ export default {
       }
     },
   },
+  created() {},
   methods: {
+    galleryImg() {},
+
     async sendGVision() {
       const res = await this.$refs.webcam.googleVision();
       console.log(res);
@@ -102,10 +107,7 @@ export default {
     onCameras(cameras) {
       this.devices = cameras;
       // 0前置 1后置
-      this.camera =
-        this.devices.length == 1
-          ? this.devices[0].deviceId
-          : this.devices[1].deviceId;
+      this.camera = this.devices[0].deviceId;
       // console.log("On Cameras Event", this.devices);
     },
     onCameraChange(deviceId) {
