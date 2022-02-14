@@ -7,6 +7,7 @@
       :src="source"
       :autoplay="autoplay"
       :playsinline="playsinline"
+      muted
     />
   </div>
 </template>

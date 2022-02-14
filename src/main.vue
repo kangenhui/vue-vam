@@ -40,6 +40,7 @@
     </div>
     <div class="footer">
       <el-button type="primary" @click="toVideo">下一步</el-button>
+      <el-button type="primary" @click="toText">测试选择文件</el-button>
     </div>
   </div>
 </template>
@@ -83,6 +84,9 @@ export default {
           imageType: imageType,
         },
       });
+    },
+    toText(){
+      this.$router.push("/text");
     },
     toVideo() {
       if (this.imgNegative == undefined || this.imgNegative == undefined) {

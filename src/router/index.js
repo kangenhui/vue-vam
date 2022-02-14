@@ -23,6 +23,12 @@ export const constantRoutes = [
         name: 'videoRecording',
         props: true
     },
+    {
+        path: '/text',
+        component: () => import('@/text'),
+        name: 'text',
+        props: true
+    },
 ]
 
 const router = new Router({
