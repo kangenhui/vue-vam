@@ -22,11 +22,20 @@
           /> -->
           <!-- capture="camera" -->
           <input
+            ref="filElem"
             id="upfile"
             type="file"
-            accept="image/*"
+            accept="video/*"
             class="add_upload_file"
+            capture="camcorder"
             @change="fileUpload"
+          />
+
+          <input
+            type="submit"
+            name="Submit"
+            value="点击我,让文本框获取焦点，同时触发onchange事件"
+            @click="clickMe()"
           />
         </button>
       </div>
@@ -43,6 +52,10 @@ export default {
     };
   },
   methods: {
+    clickMe() {
+      this.$refs.filElem.dispatchEvent(new MouseEvent('click')) 
+    },
+
     fileUpload() {
       let that = this;
       let file = document.getElementById("upfile");
@@ -59,32 +72,32 @@ export default {
           formData.append("file", files[0]);
           formData.append("mod", 5);
           formData.append("opt", 2);
-          let data = {
-            mod: 5,
-            opt: 2,
-            formData,
-          };
-          fetch("/upload", {
-            method: "POST",
-            body: formData,
-            headers: {
-              // Auth: 'token'
-              "Access-Control-Allow-Origin": "*",
-              Authorization: "Bearer ",
-            },
-          })
-            .then((res) => {
-              return res.json();
-            })
-            .then((res) => {
-              console.log(res);
-              if (res.sta == 0) {
-                // 上传代码返回结果之后
-                // console.log(res.data)
-              } else {
-                console.log(res.msg);
-              }
-            });
+          //   let data = {
+          //     mod: 5,
+          //     opt: 2,
+          //     formData,
+          //   };
+          //   fetch("/upload", {
+          //     method: "POST",
+          //     body: formData,
+          //     headers: {
+          //       // Auth: 'token'
+          //       "Access-Control-Allow-Origin": "*",
+          //       Authorization: "Bearer ",
+          //     },
+          //   })
+          //     .then((res) => {
+          //       return res.json();
+          //     })
+          //     .then((res) => {
+          //       console.log(res);
+          //       if (res.sta == 0) {
+          //         // 上传代码返回结果之后
+          //         // console.log(res.data)
+          //       } else {
+          //         console.log(res.msg);
+          //       }
+          //     });
 
           let reader = new FileReader();
           reader.readAsDataURL(files[0]);
@@ -92,6 +105,7 @@ export default {
             let timestamp = new Date().valueOf();
             that.imgs.push({ id: timestamp, base64: this.result });
             console.log(that.imgs);
+            alert(that.imgs);
           };
         } else {
           alert("请选择要上传的图片");

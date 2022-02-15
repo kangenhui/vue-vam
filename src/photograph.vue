@@ -147,7 +147,7 @@ export default {
   }
 
   .footer {
-    height: 10%;
+    // height: 20%;
     .el-button {
       width: 80%;
     }

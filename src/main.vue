@@ -40,7 +40,19 @@
     </div>
     <div class="footer">
       <el-button type="primary" @click="toVideo">下一步</el-button>
-      <el-button type="primary" @click="toText">测试选择文件</el-button>
+      <!-- <el-button type="primary" @click="toText">测试选择文件</el-button> -->
+    </div>
+
+    <div>
+      <input
+        ref="filElem"
+        id="upfile"
+        type="file"
+        accept="video/*"
+        capture="camcorder"
+        @change="fileUpload"
+        style="display: none"
+      />
     </div>
   </div>
 </template>
@@ -85,7 +97,7 @@ export default {
         },
       });
     },
-    toText(){
+    toText() {
       this.$router.push("/text");
     },
     toVideo() {
@@ -100,7 +112,13 @@ export default {
         this.$message.error("图片大小超过1MB,请重新拍照上传");
       }
       this.activa = 1;
-      this.$router.push("/videoRecording");
+      // this.$router.push("/videoRecording");
+      this.$refs.filElem.dispatchEvent(new MouseEvent("click"));
+    },
+    fileUpload() {
+      let file = document.getElementById("upfile");
+      let files = file.files;
+      console.log(files[0]);
     },
     base64ToSize(imgUrl) {
       var eqTagIndex = imgUrl.indexOf("=");
@@ -124,8 +142,8 @@ img {
   // height: auto;
   // max-width: 100%;
   // max-height: 100%;
-  width: 100%; 
-  height: 100%; 
+  width: 100%;
+  height: 100%;
   display: block;
 }
 
