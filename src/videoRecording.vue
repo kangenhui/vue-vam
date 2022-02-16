@@ -83,7 +83,6 @@ export default {
 
     async sendGVision() {
       const res = await this.$refs.webcam.googleVision();
-      console.log(res);
       this.report = res.labelAnnotations;
     },
     async onCapture() {
@@ -118,8 +117,8 @@ export default {
     async recordOrStop() {
       if (this.isRecord) {
         // 停止
-        this.$refs.webcam.stop();
-        this.flag = true;
+        this.$refs.webcam.stopVideo();
+        this.flag = true; 
       } else {
         // 开始
         this.img = await this.$refs.webcam.record();

@@ -40,7 +40,7 @@
     </div>
     <div class="footer">
       <el-button type="primary" @click="toVideo">下一步</el-button>
-      <!-- <el-button type="primary" @click="toText">测试选择文件</el-button> -->
+      <el-button type="primary" @click="toText">测试选择文件</el-button>
     </div>
 
     <div>
@@ -98,7 +98,7 @@ export default {
       });
     },
     toText() {
-      this.$router.push("/text");
+      this.$router.push("/videoRecording");
     },
     toVideo() {
       if (this.imgNegative == undefined || this.imgNegative == undefined) {
@@ -119,6 +119,7 @@ export default {
       let file = document.getElementById("upfile");
       let files = file.files;
       console.log(files[0]);
+      alert(files[0].size)
     },
     base64ToSize(imgUrl) {
       var eqTagIndex = imgUrl.indexOf("=");

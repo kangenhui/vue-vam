@@ -31,7 +31,6 @@ export default {
       lastVideoMode: "deviceId",
       camsList: { back: null, front: null },
       inited: false,
-      videoStream: null,
       recordedBlobs: [],
     };
   },
@@ -239,44 +238,17 @@ export default {
       if (this.debug) console.log(this.Contraints);
       getUserMedia(this.Contraints, (err, stream) => {
         if (err) {
-          if (
-            err.name == "NotFoundError" ||
-            err.name == "DevicesNotFoundError"
-          ) {
-            console.log("用户没有网络摄像头或麦克风");
-          } else if (
-            err.name == "NotReadableError" ||
-            err.name == "TrackStartError"
-          ) {
-            console.log(
-              "尽管用户授予了使用匹配设备的权限，但在操作系统、浏览器或网页级别发生了硬件错误，从而阻止了对设备的访问。"
-            );
-          } else if (
-            err.name == "OverconstrainedError" ||
-            err.name == "ConstraintNotSatisfiedError"
-          ) {
-            console.log("没有满足请求标准的候选设备");
-          } else if (
-            err.name == "NotAllowedError" ||
-            err.name == "PermissionDeniedError"
-          ) {
-            console.log("用户拒绝（或以前拒绝）访问网络摄像头或麦克风。");
-          } else if (err.name == "TypeError" || err.name == "TypeError") {
-            console.log("需要音频和/或视频");
-          } else {
-            this.$emit("error", err);
-            console.log("failed to get user camera", err);
-          }
+          this.$emit("error", err);
+          console.log("failed to get user camera");
           return;
         }
-        // console.log('Got stream', stream)
+        console.log("Got stream", stream);
         if (window.ImageCapture) {
           const mediaStreamTrack = stream.getVideoTracks()[0];
           this.imageCapture = new ImageCapture(mediaStreamTrack);
         }
         this.video = this.$refs.video;
         this.loadSrcStream(stream);
-        this.videoStream = stream; // 视频使用
       });
     },
 
@@ -380,13 +352,12 @@ export default {
     },
 
     async record() {
-      
       let options;
       let mediaRecorder;
       this.recordedBlobs = [];
       if (typeof MediaRecorder.isTypeSupported === "function") {
         // 根据浏览器来设置编码参数
-        if ( MediaRecorder.isTypeSupported("video/webm;codecs=vp9")) {
+        if (MediaRecorder.isTypeSupported("video/webm;codecs=vp9")) {
           options = {
             MimeType: "video/webm;codecs=h264",
           };
@@ -399,28 +370,42 @@ export default {
             MimeType: "video/webm;codecs=vp8",
           };
         }
-        mediaRecorder = new MediaRecorder(this.videoStream, options);
+        mediaRecorder = new MediaRecorder(this.$refs.video.srcObject, options);
       } else {
-        // console.log("MediaRecorder not supported, boo");
-        mediaRecorder = new MediaRecorder(this.videoStream);
+        mediaRecorder = new MediaRecorder(this.$refs.video.srcObject);
       }
+
       mediaRecorder.start();
+      console.log(this.$refs.video.srcObject, options);
+
       mediaRecorder.ondataavailable = (e) => {
         if (e.data && e.data.size > 0) {
           this.recordedBlobs.push(e.data);
         }
       };
-
-      let reader = new FileReader();
       mediaRecorder.onstop = () => {
+        let reader = new FileReader();
         var blob = new Blob(this.recordedBlobs, { type: "video/mp4" });
         reader.addEventListener("load", () => {
           console.log(reader.result);
+          var strLen = reader.result.length;
+          alert(strLen - (strLen / 8) * 2);
         });
         reader.readAsDataURL(blob);
       };
+
       // new File(blob, filename, {type: "video/mp4" , lastModified: Date.now()});
       // return new Promise((resolve, reject) => {  resolve(reader.result);});
+    },
+
+    stopVideo() {
+      console.log(this.$refs.video.srcObject);
+      if (!this.$refs.video.srcObject) return;
+      const stream = this.$refs.video.srcObject;
+      const tracks = stream.getTracks();
+      tracks.forEach((track) => {
+        track.stop();
+      });
     },
   },
 };
