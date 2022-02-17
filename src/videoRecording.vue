@@ -118,7 +118,7 @@ export default {
       if (this.isRecord) {
         // 停止
         this.$refs.webcam.stopVideo();
-        this.flag = true; 
+        // this.flag = true; 
       } else {
         // 开始
         this.img = await this.$refs.webcam.record();

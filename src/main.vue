@@ -98,7 +98,7 @@ export default {
       });
     },
     toText() {
-      this.$router.push("/videoRecording");
+      this.$router.push("/demo2");
     },
     toVideo() {
       if (this.imgNegative == undefined || this.imgNegative == undefined) {

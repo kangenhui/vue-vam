@@ -313,9 +313,9 @@ export default {
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
       return canvas;
     },
-    /* type =
+    /* type = 
     'LABEL_DETECTION': Labels can identify objects, locations, activities, animal species, products, and more.
-    'TEXT_DETECTION': (OCR TEXT_DETECTION detects and extracts text from any image),
+    'TEXT_DETECTION': (OCR TEXT_DETECTION detects and extracts text from any image), 
     'DOCUMENT_TEXT_DETECTION': DOCUMENT_TEXT_DETECTION extracts text from an image; the response is optimized for dense text and documents. The JSON includes page, block, paragraph, word, and break information
     */
     async googleVision(type = "LABEL_DETECTION", index) {
@@ -369,10 +369,6 @@ export default {
           options = {
             MimeType: "video/webm;codecs=vp8",
           };
-        } else if (MediaRecorder.isTypeSupported("video/mp4")) {
-          options = {
-            MimeType: "video/mp4",
-          };
         }
         mediaRecorder = new MediaRecorder(this.$refs.video.srcObject, options);
       } else {
@@ -380,24 +376,34 @@ export default {
       }
 
       mediaRecorder.start();
-      console.log(this.$refs.video.srcObject, options);
 
       mediaRecorder.ondataavailable = (e) => {
-        console.log('available', e)
         if (e.data && e.data.size > 0) {
           this.recordedBlobs.push(e.data);
         }
       };
       mediaRecorder.onstop = () => {
-        console.log('onstop')
+        console.log("停止录制事件")
         let reader = new FileReader();
         var blob = new Blob(this.recordedBlobs, { type: "video/mp4" });
-        reader.addEventListener("load", () => {
-          console.log(reader.result);
-          var strLen = reader.result.length;
-          alert(strLen - (strLen / 8) * 2);
-        });
-        reader.readAsDataURL(blob);
+        // reader.addEventListener("load", () => {
+        //   console.log(reader.result);
+        //   var strLen = reader.result.length;
+        //   alert(strLen - (strLen / 8) * 2);
+        // });
+        // reader.readAsDataURL(blob);
+
+        // console.log(blob);
+        // const link = document.createElement("a");
+        // document.body.appendChild(link);
+        // link.style.display = "none";
+        // const videoUrl = window.URL.createObjectURL(blob);
+        // console.log(videoUrl);
+        // link.href = videoUrl;
+        // link.download = "media - " + format + ".mp4";
+
+        // link.click();
+        // link.remove();
       };
 
       // new File(blob, filename, {type: "video/mp4" , lastModified: Date.now()});
