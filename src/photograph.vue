@@ -48,7 +48,7 @@ export default {
   },
   computed: {
     device: function () {
-      return find(this.devices, (n) => n.deviceId == this.deviceId);
+      return find(this.devices, (n) => n.deviceId === this.deviceId);
     },
   },
   watch: {
@@ -75,7 +75,7 @@ export default {
     },
     async onCapture() {
       // this.img = await this.$refs.webcam.capture();
-      if (this.$route.params.imageType == 1) {
+      if (this.$route.params.imageType === 1) {
         eventBus.$emit("imagePositive", await this.$refs.webcam.capture());
       } else {
         eventBus.$emit("imgNegative", await this.$refs.webcam.capture());
@@ -104,7 +104,7 @@ export default {
       this.devices = cameras;
       // 0前置 1后置
       this.camera =
-        this.devices.length == 1
+        this.devices.length === 1
           ? this.devices[0].deviceId
           : this.devices[1].deviceId;
       // console.log("On Cameras Event", this.devices);
