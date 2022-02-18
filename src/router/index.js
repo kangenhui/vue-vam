@@ -41,6 +41,12 @@ export const constantRoutes = [
         name: 'demo3',
         props: true
     },
+    {
+        path: '/cameraCanvas',
+        component: () => import('@/cameraCanvas'),
+        name: 'cameraCanvas',
+        props: true
+    },
 ]
 
 const router = new Router({

@@ -26,11 +26,9 @@ export default {
       }
       navigator.mediaDevices
         .getUserMedia({
-         video: { frameRate: { ideal: 10, max: 15 } }
+          video: { frameRate: { ideal: 10, max: 15 } },
         })
         .then((stream) => {
-          this.mediaStreamTrack =
-            typeof stream.stop === "function" ? stream : stream.getTracks()[0];
           this.video_stream = stream;
           this.$refs.video.srcObject = stream;
           this.$refs.video.play();
@@ -50,49 +48,43 @@ export default {
       console.log("record");
       this.isRecord = !this.isRecord;
       let mediaRecorder;
-      let options;
       this.recordedBlobs = [];
       if (typeof MediaRecorder.isTypeSupported === "function") {
-        if (MediaRecorder.isTypeSupported("video/webm;codecs=vp9")) {
-          options = {
-            MimeType: "video/webm;codecs=h264",
-          };
-        } else if (MediaRecorder.isTypeSupported("video/webm;codecs=h264")) {
-          options = {
-            MimeType: "video/webm;codecs=h264",
-          };
-        } else if (MediaRecorder.isTypeSupported("video/webm;codecs=vp8")) {
-          options = {
-            MimeType: "video/webm;codecs=vp8",
-          };
-        }
-        mediaRecorder = new MediaRecorder(this.video_stream, options);
+        mediaRecorder = new MediaRecorder(this.video_stream, {
+          audioBitsPerSecond: 192000,
+          videoBitsPerSecond: 10000000,
+        });
       } else {
         console.log("当前不支持isTypeSupported，使用浏览器的默认编解码器");
         mediaRecorder = new MediaRecorder(this.video_stream);
       }
       mediaRecorder.start();
       mediaRecorder.ondataavailable = (e) => {
-        console.log(e);
         if (e.data && e.data.size > 0) {
           this.recordedBlobs.push(e.data);
         }
       };
       mediaRecorder.onstop = () => {
-        const blob = new Blob(this.recordedBlobs, { type: "video/mp4" });
-        this.recordedBlobs = [];
-        const videoUrl = window.URL.createObjectURL(blob);
-        document.getElementById("downLoadLink").href = videoUrl;
-        document.getElementById("downLoadLink").download = "media.mp4";
-        document.getElementById("downLoadLink").innerHTML =
-          "DownLoad video file";
-        const rand = Math.floor(Math.random() * 1000000);
-        const name = `video${rand}.mp4`;
-        document.getElementById("downLoadLink").setAttribute("download", name);
-        document.getElementById("downLoadLink").setAttribute("name", name);
-        setTimeout(() => {
-          document.getElementById("downLoadLink").click();
-        }, 500);
+        let url = URL.createObjectURL(this.recordedBlobs[0]);
+        let link = document.createElement("a");
+        link.href = url;
+        document.body.appendChild(link);
+        link.download = "121.mp4";
+        link.click();
+        // const blob = new Blob(this.recordedBlobs);
+        // this.recordedBlobs = [];
+        // const videoUrl = window.URL.createObjectURL(blob);
+        // document.getElementById("downLoadLink").href = videoUrl;
+        // document.getElementById("downLoadLink").download = "media.mp4";
+        // document.getElementById("downLoadLink").innerHTML =
+        //   "DownLoad video file";
+        // const rand = Math.floor(Math.random() * 1000000);
+        // const name = `video${rand}.mp4`;
+        // document.getElementById("downLoadLink").setAttribute("download", name);
+        // document.getElementById("downLoadLink").setAttribute("name", name);
+        // setTimeout(() => {
+        //   document.getElementById("downLoadLink").click();
+        // }, 500);
       };
     },
 

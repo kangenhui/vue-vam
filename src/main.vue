@@ -26,7 +26,7 @@
       </el-card>
       <el-card class="box-card" shadow="always">
         <div class="card-text" v-if="!imgNegative">
-          上传身份证（国徽面） 
+          上传身份证（国徽面）
           <el-button
             icon="el-icon-plus"
             circle
@@ -40,7 +40,8 @@
     </div>
     <div class="footer">
       <el-button type="primary" @click="toVideo">下一步</el-button>
-      <el-button type="primary" @click="toText">测试选择文件</el-button>
+      <el-button type="primary" @click="toText">安卓视频</el-button>
+      <el-button type="primary" @click="toios">ios视频</el-button>
     </div>
 
     <div>
@@ -100,6 +101,9 @@ export default {
     toText() {
       this.$router.push("/demo2");
     },
+    toios() {
+      this.$router.push("/cameraCanvas");
+    },
     toVideo() {
       if (this.imgNegative == undefined || this.imgNegative == undefined) {
         this.$message.error("请完成当前操作");
@@ -111,6 +115,15 @@ export default {
       ) {
         this.$message.error("图片大小超过1MB,请重新拍照上传");
       }
+      //  var u = navigator.userAgent;
+      // var isiOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
+      // var isAndroid = u.indexOf("Android") > -1 || u.indexOf("Adr") > -1; //android终端
+      // if (isiOS) {
+      //   window.location.href = "安卓下载地址";
+      // } else if (isAndroid) {
+      //   window.location.href = "安卓下载地址";
+      // }
+
       this.activa = 1;
       // this.$router.push("/videoRecording");
       this.$refs.filElem.dispatchEvent(new MouseEvent("click"));
@@ -119,7 +132,7 @@ export default {
       let file = document.getElementById("upfile");
       let files = file.files;
       console.log(files[0]);
-      alert(files[0].size)
+      alert(files[0].size);
     },
     base64ToSize(imgUrl) {
       var eqTagIndex = imgUrl.indexOf("=");
