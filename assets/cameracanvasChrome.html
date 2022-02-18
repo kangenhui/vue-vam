@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>MediaRecorder使用示例</title>
+</head>
+<style>
+    canvas {
+        box-shadow: 0 0 10px gray;
+        display: block;
+    }
+</style>
+<h3 style="text-align: center;margin-top:10px;">MediaRecorder使用示例 - 摄像头版本</h3>
+<p style="text-align: center;margin-top:10px;color:grey">点击画布在视频上作画<button id="clearBtn">清除笔迹</button></p>
+<div style="text-align: center;margin-top:10px;">
+    <video src="" id="srcvideo"></video>
+</div>
+<div style="text-align: center;margin-top:10px;">
+    <button id="startBtn" disabled>开始录制</button>
+    <button id="pauseBtn" disabled>暂停录制</button>
+    <button id="resumeBtn" disabled>恢复录制</button>
+    <button id="stopBtn" disabled>结束录制</button>
+</div>
+
+<script>
+  var videoTarget = document.getElementById('srcvideo');
+  var recorder;
+  navigator.mediaDevices.getUserMedia({audio: true, video: {width: 400, height: 600}})
+    .then((stream) => {
+      // const options = {mimeType:'video/webm;codecs=vp8,opus'};
+      var recorder = new MediaRecorder(stream, {
+        audioBitsPerSecond: 192000,
+        videoBitsPerSecond: 10000000,
+      });
+      videoTarget.srcObject = stream;
+      recorder.ondataavailable = (event) => {
+        console.log(event)
+        let url = URL.createObjectURL(event.data);
+        let link = document.createElement("a");
+        link.href = url;
+        document.body.appendChild(link);
+        link.download = 'media.mp4';
+        link.click();
+      }
+      recorder.start();//开始录制
+      setTimeout(() => {
+        recorder.stop();//录制结束
+      }, 5000)
+    });
+</script>
