@@ -26,7 +26,7 @@ export default {
       }
       navigator.mediaDevices
         .getUserMedia({
-          video: true,
+         video: { frameRate: { ideal: 10, max: 15 } }
         })
         .then((stream) => {
           this.mediaStreamTrack =

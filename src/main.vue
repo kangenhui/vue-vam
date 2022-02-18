@@ -26,7 +26,7 @@
       </el-card>
       <el-card class="box-card" shadow="always">
         <div class="card-text" v-if="!imgNegative">
-          上传身份证（国徽面）
+          上传身份证（国徽面） 
           <el-button
             icon="el-icon-plus"
             circle
@@ -91,7 +91,7 @@ export default {
     toPhotograph(imageType) {
       // this.$router.push("/photograph");
       this.$router.push({
-        name: "photograph",
+        name: "demo3",
         params: {
           imageType: imageType,
         },

@@ -81,7 +81,7 @@ export default {
         eventBus.$emit("imgNegative", await this.$refs.webcam.capture());
       }
 
-      this.onStop();
+      this.onStop(); 
 
       this.$router.go(-1);
     },

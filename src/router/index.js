@@ -35,6 +35,12 @@ export const constantRoutes = [
         name: 'demo2',
         props: true
     },
+    {
+        path: '/demo3',
+        component: () => import('@/demo3'),
+        name: 'demo3',
+        props: true
+    },
 ]
 
 const router = new Router({
