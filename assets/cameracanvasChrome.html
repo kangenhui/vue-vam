@@ -14,15 +14,19 @@
 <h3 style="text-align: center;margin-top:10px;">MediaRecorder使用示例 - 摄像头版本</h3>
 <div style="text-align: center;margin-top:10px;">
   <video src="" id="srcvideo"></video>
-  <canvas id="canvas" height="460" width="640"></canvas>
+<!--  <canvas id="canvas" height="460" width="640"></canvas>-->
+  <button id="start">开始</button>
+  <button id="end">结束</button>
 </div>
 <script>
   var videoTarget = document.getElementById('srcvideo');
-  var canvas = document.getElementById('canvas');
-  console.log(canvas);
-  var ctx = canvas.getContext('2d');
-  ctx.fillStyle = "white";
-  ctx.fillRect(0, 0, 640, 460);
+  // var canvas = document.getElementById('canvas');
+  var start = document.getElementById('start');
+  var end = document.getElementById('end');
+  // console.log(canvas);
+  // var ctx = canvas.getContext('2d');
+  // ctx.fillStyle = "white";
+  // ctx.fillRect(0, 0, 640, 460);
   var recorder;
   navigator.mediaDevices.getUserMedia({audio: true, video: {width: 400, height: 600}})
     .then((stream) => {
@@ -33,10 +37,13 @@
         videoBitsPerSecond: 10000000,
       });
       videoTarget.srcObject = stream;
-      videoTarget.play();
-      requestAnimationFrame(() => {
-        ctx.drawImage(videoTarget, 0, 0, 640, 460)
-      });
+      start.onclick = e => {
+        videoTarget.play();
+        recorder.start();//开始录制
+      }
+      // requestAnimationFrame(() => {
+      //   ctx.drawImage(videoTarget, 0, 0, 640, 460)
+      // });
       recorder.ondataavailable = (event) => {
         console.log(event)
         let url = URL.createObjectURL(event.data);
@@ -46,9 +53,9 @@
         link.download = 'media.mp4';
         link.click();
       }
-      recorder.start();//开始录制
-      setTimeout(() => {
+      end.onclick = e => {
         recorder.stop();//录制结束
-      }, 5000)
+      }
+
     });
 </script>
