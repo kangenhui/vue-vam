@@ -1,7 +1,6 @@
 <template>
   <div class="photograph">
-    <video ref="video"></video>
-    <!-- <canvas style="display: none" id="canvasCamera"></canvas> -->
+    <video ref="video" playsinline="false" webkit-playsinline="false"></video>
     <el-button type="danger" @click="setImage">确 认 拍 照</el-button>
     <el-button type="danger" ref="ttt" @click="playing">11</el-button>
     <!-- <img :src="imgNegative" style="height: 100px; width: 100px" /> -->

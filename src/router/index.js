@@ -24,12 +24,6 @@ export const constantRoutes = [
         props: true
     },
     {
-        path: '/text',
-        component: () => import('@/text'),
-        name: 'text',
-        props: true
-    },
-    {
         path: '/demo2',
         component: () => import('@/demo2'),
         name: 'demo2',

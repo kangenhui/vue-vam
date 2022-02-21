@@ -1,19 +1,15 @@
 <template>
-  <div class="publish">
+  <div class="container">
     <video ref="srcvideo" webkit-playsinline="true" playsinline="true"></video>
-    <el-button type="danger" @click="setup" ref="start">开始</el-button>
-    <el-button type="danger" @click="stop">结束 </el-button>
+    <el-button type="success" @click="setup" ref="start">开始录制</el-button>
+    <el-button type="danger" @click="stop">结束录制</el-button>
   </div>
 </template>
 
 <script>
 export default {
   data() {
-    return {
-      drawArray: [],
-      ctx: null,
-      recordedBlobs: undefined,
-    };
+    return {};
   },
   mounted() {
     this.init();
@@ -22,8 +18,8 @@ export default {
     init() {
       navigator.mediaDevices
         .getUserMedia({
-          audio: true,
-          video: { width: 400, height: 600 },
+          // audio: true,
+          video: { width: 600, height: 400 },
         })
         .then((mediaStream) => {
           this.$refs.srcvideo.srcObject = mediaStream;
@@ -37,24 +33,19 @@ export default {
     setup() {
       this.$refs.srcvideo.play();
       this.recorder.start(); //开始录制
-
-      // this.recorder.onstop = () => {
-
-      // };
     },
     stop() {
       this.recorder.ondataavailable = (e) => {
-        // if (e.data && e.data.size > 0) {
-        //   this.recordedBlobs = e.data;
-        // }
         let url = URL.createObjectURL(e.data);
         let link = document.createElement("a");
         link.href = url;
         document.body.appendChild(link);
-        link.download = "1111111.mp4";
+        const rand = Math.floor(Math.random() * 1000000);
+        link.download = `video${rand}.mp4`;
         link.click();
       };
       this.recorder.stop();
+      
       if (!this.$refs.srcvideo.srcObject) return;
       const stream = this.$refs.srcvideo.srcObject;
       const tracks = stream.getTracks();
@@ -69,6 +60,13 @@ export default {
 canvas {
   box-shadow: 0 0 10px gray;
   display: block;
+}
+.container {
+  height: 100%;
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+  text-align: center;
 }
 </style>
 </style>

@@ -10,60 +10,51 @@
       </el-steps>
     </div>
 
-    <div class="middle">
-      <el-card class="box-card" shadow="always">
-        <div class="card-text" v-if="!imgPositive">
-          上传身份证（人面面）
-          <el-button
-            icon="el-icon-plus"
-            circle
-            @click="toPhotograph(1)"
-          ></el-button>
-        </div>
-        <div class="card-text" v-else>
-          <img :src="imgPositive" @click="toPhotograph(1)" />
-        </div>
-      </el-card>
-      <el-card class="box-card" shadow="always">
-        <div class="card-text" v-if="!imgNegative">
-          上传身份证（国徽面）
-          <el-button
-            icon="el-icon-plus"
-            circle
-            @click="toPhotograph(2)"
-          ></el-button>
-        </div>
-        <div class="card-text" v-else>
-          <img :src="imgNegative" @click="toPhotograph(2)" />
-        </div>
-      </el-card>
+    <div v-if="!isPhoto">
+      <div class="middle">
+        <el-card class="box-card" shadow="always">
+          <div class="card-text" v-if="!imgPositive">
+            上传身份证（人面面）
+            <el-button
+              icon="el-icon-plus"
+              circle
+              @click="toPhotograph(1)"
+            ></el-button>
+          </div>
+          <div class="card-text" v-else>
+            <img :src="imgPositive" @click="toPhotograph(1)" />
+          </div>
+        </el-card>
+        <el-card class="box-card" shadow="always">
+          <div class="card-text" v-if="!imgNegative">
+            上传身份证（国徽面）
+            <el-button
+              icon="el-icon-plus"
+              circle
+              @click="toPhotograph(2)"
+            ></el-button>
+          </div>
+          <div class="card-text" v-else>
+            <img :src="imgNegative" @click="toPhotograph(2)" />
+          </div>
+        </el-card>
+      </div>
+      <div class="footer">
+        <el-button type="primary" @click="toVideo">下一步</el-button>
+        <!-- <el-button type="primary" @click="toText">安卓视频</el-button> -->
+        <!-- <el-button type="primary" @click="toios">ios视频</el-button> -->
+      </div>
     </div>
-    <div class="footer">
-      <el-button type="primary" @click="toVideo">下一步</el-button>
-      <el-button type="primary" @click="toText">安卓视频</el-button>
-      <el-button type="primary" @click="toios">ios视频</el-button>
-    </div>
-
-    <div>
-      <input
-        ref="filElem"
-        id="upfile"
-        type="file"
-        accept="video/*"
-        capture="camcorder"
-        @change="fileUpload"
-        style="display: none"
-      />
+    <div v-show="isPhoto" class="photo">
+      <video ref="video" playsinline="false" webkit-playsinline="false"></video>
+      <el-button type="danger" @click="setImage">确 认 拍 照</el-button>
     </div>
   </div>
 </template>
 
 <script>
-import eventBus from "./goBackEntity.js";
-
 export default {
   name: "photograph",
-  components: {},
   data() {
     return {
       bodyStyle: {
@@ -72,31 +63,28 @@ export default {
       active: 0,
       imgPositive: undefined,
       imgNegative: undefined,
+      isPhoto: false,
+      isVideo: false,
+      front: 0,
+      // 拍照
+      mediaStreamTrack: {},
+      canvas: null,
+      context: null,
+      cameras: [],
     };
   },
   computed: {},
   watch: {},
   filters: {},
-  created() {
-    var self = this;
-    this.imgPositive = self.$parent.imgDataOne;
-    this.imgNegative = self.$parent.imgDataTwo;
-    eventBus.$on("imagePositive", (val) => {
-      self.$parent.imgDataOne = val;
-    });
-    eventBus.$on("imgNegative", (val) => {
-      self.$parent.imgDataTwo = val;
-    });
+  mounted() {
+    this.loadCameras();
   },
+  created() {},
   methods: {
     toPhotograph(imageType) {
-      // this.$router.push("/photograph");
-      this.$router.push({
-        name: "demo3",
-        params: {
-          imageType: imageType,
-        },
-      });
+      this.isPhoto = true;
+      this.front = imageType;
+      this.$refs.video.play();
     },
     toText() {
       this.$router.push("/demo2");
@@ -115,30 +103,69 @@ export default {
       ) {
         this.$message.error("图片大小超过1MB,请重新拍照上传");
       }
-      //  var u = navigator.userAgent;
-      // var isiOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
-      // var isAndroid = u.indexOf("Android") > -1 || u.indexOf("Adr") > -1; //android终端
-      // if (isiOS) {
-      //   window.location.href = "安卓下载地址";
-      // } else if (isAndroid) {
-      //   window.location.href = "安卓下载地址";
-      // }
-
       this.activa = 1;
-      // this.$router.push("/videoRecording");
-      this.$refs.filElem.dispatchEvent(new MouseEvent("click"));
+      this.stopPhoto();
+      this.$router.push("/cameraCanvas");
     },
-    fileUpload() {
-      let file = document.getElementById("upfile");
-      let files = file.files;
-      console.log(files[0]);
-      alert(files[0].size);
-    },
+
     base64ToSize(imgUrl) {
       var eqTagIndex = imgUrl.indexOf("=");
       imgUrl = eqTagIndex != -1 ? imgUrl.substring(0, eqTagIndex) : imgUrl;
       var strLen = imgUrl.length;
       return strLen - (strLen / 8) * 2;
+    },
+
+    // -----------------------拍照----------------------------
+    loadCameras() {
+      navigator.mediaDevices
+        .enumerateDevices()
+        .then((devices) => {
+          devices.forEach((device) => {
+            if (device.kind === "videoinput") {
+              this.cameras.push(device.deviceId);
+            }
+          });
+          this.getCamera();
+        })
+        .catch(function (err) {
+          console.log(err.name + ": " + err.message);
+        });
+    },
+    getCamera() {
+      let device =
+        this.cameras.length === 1 ? this.cameras[0] : this.cameras[1];
+      this.canvas = document.createElement("canvas");
+      this.context = this.canvas.getContext("2d");
+      if (navigator.mediaDevices === undefined) {
+        navigator.mediaDevices = {};
+      }
+      navigator.mediaDevices
+        .getUserMedia({
+          audio: false,
+          video: { deviceId: { exact: device } },
+        })
+        .then((stream) => {
+          this.mediaStreamTrack =
+            typeof stream.stop === "function" ? stream : stream.getTracks()[0];
+          this.$refs.video.srcObject = stream;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    setImage() {
+      const video = this.$refs.video;
+      this.context.drawImage(video, 0, 0, 300, 150);
+      const image = this.canvas.toDataURL("image/jpeg");
+      if (this.front === 1) {
+        this.imgPositive = image;
+      } else {
+        this.imgNegative = image;
+      }
+      this.isPhoto = false;
+    },
+    stopPhoto() {
+      this.$refs.video.srcObject.getTracks()[0].stop();
     },
   },
 };
@@ -214,6 +241,16 @@ img {
     height: 10%;
     .el-button {
       width: 80%;
+    }
+  }
+
+  .photo {
+    height: 55%;
+    width: 100%;
+
+    video {
+      height: 100%;
+      width: 100%;
     }
   }
 }

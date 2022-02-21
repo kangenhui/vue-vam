@@ -1,7 +1,7 @@
 <template>
   <div class="publish">
     <a id="downLoadLink" style="display: none"></a>
-    <video ref="video"></video>
+    <video ref="video" playsinline="true" webkit-playsinline="true"></video>
     <el-button type="primary" @click="recordOrStop">视频录制</el-button>
   </div>
 </template>
@@ -21,9 +21,6 @@ export default {
   },
   methods: {
     getCamera() {
-      if (navigator.mediaDevices === undefined) {
-        navigator.mediaDevices = {};
-      }
       navigator.mediaDevices
         .getUserMedia({
           video: { frameRate: { ideal: 10, max: 15 } },
