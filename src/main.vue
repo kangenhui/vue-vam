@@ -71,6 +71,7 @@ export default {
       canvas: null,
       context: null,
       cameras: [],
+      isPlay: false,
     };
   },
   computed: {},
@@ -82,9 +83,13 @@ export default {
   created() {},
   methods: {
     toPhotograph(imageType) {
+      if (!this.isPlay) {
+        console.log("play()执行")
+        this.$refs.video.play();
+        this.isPlay = true;
+      }
       this.isPhoto = true;
       this.front = imageType;
-      this.$refs.video.play();
     },
     toText() {
       this.$router.push("/demo2");
@@ -104,6 +109,7 @@ export default {
         this.$message.error("图片大小超过1MB,请重新拍照上传");
       }
       this.activa = 1;
+      this.isPlay = false;
       this.stopPhoto();
       this.$router.push("/cameraCanvas");
     },
@@ -148,10 +154,12 @@ export default {
           this.mediaStreamTrack =
             typeof stream.stop === "function" ? stream : stream.getTracks()[0];
           this.$refs.video.srcObject = stream;
+          this.$refs.video.play();
         })
         .catch((err) => {
           console.log(err);
         });
+        console.log("相机加载完毕")
     },
     setImage() {
       const video = this.$refs.video;

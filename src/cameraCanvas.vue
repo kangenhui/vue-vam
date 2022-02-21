@@ -1,7 +1,9 @@
 <template>
   <div class="container">
     <video ref="srcvideo" webkit-playsinline="true" playsinline="true"></video>
-    <el-button type="success" @click="setup" ref="start">开始录制</el-button>
+    <el-button type="success" @click="setup" :disabled="isSetup"
+      >开始录制</el-button
+    >
     <el-button type="danger" @click="stop">结束录制</el-button>
   </div>
 </template>
@@ -9,7 +11,9 @@
 <script>
 export default {
   data() {
-    return {};
+    return {
+      isSetup: false,
+    };
   },
   mounted() {
     this.init();
@@ -33,6 +37,7 @@ export default {
     setup() {
       this.$refs.srcvideo.play();
       this.recorder.start(); //开始录制
+      this.isSetup = true;
     },
     stop() {
       this.recorder.ondataavailable = (e) => {
@@ -45,7 +50,7 @@ export default {
         link.click();
       };
       this.recorder.stop();
-      
+
       if (!this.$refs.srcvideo.srcObject) return;
       const stream = this.$refs.srcvideo.srcObject;
       const tracks = stream.getTracks();
