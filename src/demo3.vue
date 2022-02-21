@@ -3,6 +3,7 @@
     <video ref="video"></video>
     <!-- <canvas style="display: none" id="canvasCamera"></canvas> -->
     <el-button type="danger" @click="setImage">确 认 拍 照</el-button>
+    <el-button type="danger" ref="ttt" @click="playing">11</el-button>
     <!-- <img :src="imgNegative" style="height: 100px; width: 100px" /> -->
   </div>
 </template>
@@ -59,12 +60,21 @@ export default {
             typeof stream.stop === "function" ? stream : stream.getTracks()[0];
           this.video_stream = stream;
           this.$refs.video.srcObject = stream;
-          this.$refs.video.play();
+          // this.$refs.video.onloadedmetadata = () => {
+          //   this.$refs.video.play();
+          // };
+          // this.$refs.video.play();
+          this.$refs.ttt.$el.click();
         })
         .catch((err) => {
           console.log(err);
         });
     },
+
+    playing() {
+      this.$refs.video.play();
+    },
+
     setImage() {
       const video = this.$refs.video;
       //   this.context.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);

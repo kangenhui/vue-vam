@@ -1,13 +1,8 @@
 <template>
   <div class="publish">
-    <video ref="srcvideo" style="display: none"></video>
-    <canvas
-      ref="canvas"
-      id="canvas"
-      height="460"
-      width="640"
-      style="width: 640px; margin: auto"
-    ></canvas>
+    <video ref="srcvideo" webkit-playsinline="true" playsinline="true"></video>
+    <el-button type="danger" @click="setup" ref="start">开始</el-button>
+    <el-button type="danger" @click="stop">结束 </el-button>
   </div>
 </template>
 
@@ -17,22 +12,14 @@ export default {
     return {
       drawArray: [],
       ctx: null,
+      recordedBlobs: undefined,
     };
   },
   mounted() {
-    // const oScript = document.createElement("script");
-    // oScript.type = "text/javascript";
-    // oScript.src = "https://api.html5media.info/1.2.2/html5media.min.js";
-    // document.body.appendChild(oScript);
-
     this.init();
   },
   methods: {
     init() {
-      this.ctx = this.$refs.canvas.getContext("2d");
-      this.ctx.fillStyle = "white";
-      this.ctx.fillRect(0, 0, canvas.width, canvas.height);
-
       navigator.mediaDevices
         .getUserMedia({
           audio: true,
@@ -40,34 +27,39 @@ export default {
         })
         .then((mediaStream) => {
           this.$refs.srcvideo.srcObject = mediaStream;
-          this.$refs.srcvideo.play();
-          this.playCanvas();
-
-          var recorder = new MediaRecorder(mediaStream, {
+          this.recorder = new MediaRecorder(mediaStream, {
+            autio: false,
             audioBitsPerSecond: 192000,
             videoBitsPerSecond: 10000000,
           });
-          recorder.start(); //开始录制
-          recorder.ondataavailable = (event) => {
-            console.log(event);
-            let url = URL.createObjectURL(event.data);
-            let link = document.createElement("a");
-            link.href = url;
-            document.body.appendChild(link);
-            link.download = "media.mp4";
-            link.click();
-          };
-          setTimeout(() => {
-            recorder.stop(); //录制结束
-          }, 5000);
         });
     },
+    setup() {
+      this.$refs.srcvideo.play();
+      this.recorder.start(); //开始录制
 
-    playCanvas() {
-      this.ctx.drawImage(this.$refs.srcvideo, 0, 0, 640, 460);
+      // this.recorder.onstop = () => {
 
-      requestAnimationFrame(() => {
-        this.playCanvas();
+      // };
+    },
+    stop() {
+      this.recorder.ondataavailable = (e) => {
+        // if (e.data && e.data.size > 0) {
+        //   this.recordedBlobs = e.data;
+        // }
+        let url = URL.createObjectURL(e.data);
+        let link = document.createElement("a");
+        link.href = url;
+        document.body.appendChild(link);
+        link.download = "1111111.mp4";
+        link.click();
+      };
+      this.recorder.stop();
+      if (!this.$refs.srcvideo.srcObject) return;
+      const stream = this.$refs.srcvideo.srcObject;
+      const tracks = stream.getTracks();
+      tracks.forEach((track) => {
+        track.stop();
       });
     },
   },
