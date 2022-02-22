@@ -67,7 +67,6 @@ export default {
       isVideo: false,
       front: 0,
       // 拍照
-      mediaStreamTrack: {},
       canvas: null,
       context: null,
       cameras: [],
@@ -84,9 +83,10 @@ export default {
   methods: {
     toPhotograph(imageType) {
       if (!this.isPlay) {
-        console.log("play()执行")
-        this.$refs.video.play();
         this.isPlay = true;
+        setTimeout(() => {
+          this.$refs.video.play();
+        }, 500); 
       }
       this.isPhoto = true;
       this.front = imageType;
@@ -128,6 +128,8 @@ export default {
         .then((devices) => {
           devices.forEach((device) => {
             if (device.kind === "videoinput") {
+              console.log(device);
+              alert(device.label);
               this.cameras.push(device.deviceId);
             }
           });
@@ -149,17 +151,18 @@ export default {
         .getUserMedia({
           audio: false,
           video: { deviceId: { exact: device } },
+          //  // user -- 前置 、environment -- 后置
+          // video: { facingMode: { exact: 'environment' }},
         })
         .then((stream) => {
-          this.mediaStreamTrack =
-            typeof stream.stop === "function" ? stream : stream.getTracks()[0];
           this.$refs.video.srcObject = stream;
-          this.$refs.video.play();
         })
         .catch((err) => {
           console.log(err);
+        })
+        .finally(() => {
+          console.log("相机加载完毕");
         });
-        console.log("相机加载完毕")
     },
     setImage() {
       const video = this.$refs.video;

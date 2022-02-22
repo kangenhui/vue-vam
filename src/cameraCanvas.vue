@@ -22,7 +22,7 @@ export default {
     init() {
       navigator.mediaDevices
         .getUserMedia({
-          // audio: true,
+          audio: false,
           video: { width: 600, height: 400 },
         })
         .then((mediaStream) => {
