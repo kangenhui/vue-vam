@@ -86,7 +86,7 @@ export default {
         this.isPlay = true;
         setTimeout(() => {
           this.$refs.video.play();
-        }, 500); 
+        }, 500);
       }
       this.isPhoto = true;
       this.front = imageType;
@@ -128,8 +128,6 @@ export default {
         .then((devices) => {
           devices.forEach((device) => {
             if (device.kind === "videoinput") {
-              console.log(device);
-              alert(device.label);
               this.cameras.push(device.deviceId);
             }
           });
@@ -142,18 +140,26 @@ export default {
     getCamera() {
       let device =
         this.cameras.length === 1 ? this.cameras[0] : this.cameras[1];
+      let constraints;
+      if (Boolean(navigator.userAgent.match(/iphone|ipod|iOS|ipad/gi))) {
+        constraints = {
+          audio: false,
+          //  // user -- 前置 、environment -- 后置
+          video: { facingMode: { exact: "environment " } },
+        };
+      } else {
+        constraints = {
+          audio: false,
+          video: { deviceId: { exact: device } },
+        };
+      }
       this.canvas = document.createElement("canvas");
       this.context = this.canvas.getContext("2d");
       if (navigator.mediaDevices === undefined) {
         navigator.mediaDevices = {};
       }
       navigator.mediaDevices
-        .getUserMedia({
-          audio: false,
-          video: { deviceId: { exact: device } },
-          //  // user -- 前置 、environment -- 后置
-          // video: { facingMode: { exact: 'environment' }},
-        })
+        .getUserMedia(constraints)
         .then((stream) => {
           this.$refs.video.srcObject = stream;
         })
